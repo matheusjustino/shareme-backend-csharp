@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  db:
+    container_name: "shareme-database"
+    build: ./docker
+    ports:
+      - 1433:1433

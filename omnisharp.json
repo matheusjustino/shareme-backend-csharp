@@ -1,0 +1,7 @@
+{
+  "RoslynExtensionsOptions": {
+    "RoslynAnalyzersOptions": {
+      "enabled": true
+    }
+  }
+}

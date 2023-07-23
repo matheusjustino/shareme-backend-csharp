@@ -1,0 +1,47 @@
+# Arquivo .editorconfig
+
+# Definir o charset para UTF-8
+[*]
+charset = utf-8
+
+# Estilo de indentação usando espaços
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# Configuração de espaçamento
+[*.cs]
+# Espaço antes e depois de parênteses e chaves
+space_before_opening_parenthesis = true
+space_after_colon = true
+space_after_comma = true
+space_around_binary_operators = true
+
+# Configuração de quebra de linha
+[*.cs]
+insert_final_newline = true
+end_of_line = crlf
+
+# Configuração de formatação
+[*.cs]
+# Quebra de linha após o namespace
+namespace_declaration_for_csharp = single_line_declaration
+
+# Quebra de linha após o bloco de using
+using_directive_placement = outside_namespace
+
+# Quebra de linha após a declaração de classe
+csharp_new_line_before_open_brace = all
+
+# Estilo de ordenação dos membros
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+
+# Quebra de linha após métodos
+csharp_new_line_before_member_body = true
+
+# Configuração de estilo de documentação (XML comments)
+[*.cs]
+# Estilo de documentação de parâmetros
+dotnet_diagnostic.CA1200.severity = none
+dotnet_diagnostic.CA1716.severity = none
