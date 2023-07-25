@@ -17,9 +17,9 @@ public class JwtService : IJwtService
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim("userId", user.Id.ToString()),
-                new Claim("username", user.Username),
-                new Claim("email", user.Email),
+                new Claim("UserId", user.Id.ToString()),
+                new Claim("Username", user.Username),
+                new Claim("Email", user.Email),
             }),
             Expires = DateTime.UtcNow.AddHours(12),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
@@ -27,8 +27,7 @@ public class JwtService : IJwtService
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenConfig);
-        var tokenString = tokenHandler.WriteToken(token);
 
-        return tokenString;
+        return tokenHandler.WriteToken(token);
     }
 }

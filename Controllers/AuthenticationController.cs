@@ -35,6 +35,7 @@ public class AuthenticationController : ControllerBase
     [HttpGet("authenticated")]
     public ActionResult<string> Test()
     {
-        return Ok("Authenticated");
+        var user = (CurrentUser)HttpContext.Items["User"];
+        return Ok(user);
     }
 }

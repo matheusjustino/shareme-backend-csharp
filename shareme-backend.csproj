@@ -29,4 +29,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.0-preview" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

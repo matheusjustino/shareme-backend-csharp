@@ -11,8 +11,10 @@ public static partial class MiddlewareInitializer
 
         app.UseRouting();
         app.UseHttpsRedirection();
-        app.UseAuthorization();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
+        app.UseAuthentication(); // first
+        app.UseAuthorization(); // after
+        app.UseMiddleware<JwtMiddleware>();
 
         return app;
     }
