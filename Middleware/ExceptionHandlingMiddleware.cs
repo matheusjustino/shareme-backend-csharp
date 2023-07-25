@@ -18,14 +18,12 @@ public class ExceptionHandlingMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        Console.WriteLine("ENTROU AQUI *************************************************************************");
         try
         {
             await this._next(context);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("ENTROU AQUI NO ERRO *************************************************************************");
             await this.HandleExceptionAscync(context, ex);
         }
     }
