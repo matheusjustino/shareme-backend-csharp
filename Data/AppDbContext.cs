@@ -40,4 +40,25 @@ public class AppDbContext : DbContext
             .HasForeignKey(p => p.PostedById)
             .OnDelete(DeleteBehavior.Restrict);
     }
+
+    public override int SaveChanges()
+    {
+        var entries = ChangeTracker.Entries<Entity>().ToList();
+
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = DateTime.Now;
+                entry.Entity.UpdatedAt = DateTime.Now;
+            }
+
+            if (entry.State is EntityState.Added or EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = DateTime.Now;
+            }
+        }
+
+        return base.SaveChanges();
+    }
 }

@@ -11,6 +11,9 @@ public class CreatePostDTO
     [Required]
     public string Description { get; set; }
 
+    [Required]
+    public IFormFile Image { get; set; }
+
     public override string ToString()
     {
         return JsonSerializer.Serialize(this);
