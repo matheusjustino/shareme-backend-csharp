@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using shareme_backend.DTOs.Auth;
 using shareme_backend.DTOs.Post;
-using shareme_backend.Models;
 using shareme_backend.Services;
 
 [Route("api/posts")]
@@ -21,7 +20,7 @@ public class PostController : ControllerBase
     [Authorize]
     [HttpPost]
     [Consumes("multipart/form-data")]
-    public async Task<ActionResult<Post>> CreatePost([FromForm] CreatePostDTO body)
+    public async Task<ActionResult<PostDTO>> CreatePost([FromForm] CreatePostDTO body)
     {
         var user = (CurrentUser)HttpContext.Items["User"];
         var newPost = await this._postService.CreatePost(user.UserId, body);
@@ -30,7 +29,7 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Post>>> ListPosts([FromQuery] int? skip, [FromQuery] int? limit)
+    public async Task<ActionResult<List<PostDTO>>> ListPosts([FromQuery] int? skip, [FromQuery] int? limit)
     {
         var posts = await this._postService.ListPosts(skip ?? 0, limit ?? 10);
         return Ok(posts);

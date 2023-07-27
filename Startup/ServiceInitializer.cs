@@ -26,6 +26,7 @@ public static partial class ServiceInitializer
         RegisterCustomDependencies(services);
         RegisterCors(services);
         RegisterAuthentication(services);
+        RegisterAutoMapper(services);
 
         return services;
     }
@@ -127,6 +128,11 @@ public static partial class ServiceInitializer
                 ValidateAudience = false,
             };
         });
+    }
+
+    private static void RegisterAutoMapper(IServiceCollection services)
+    {
+        services.AddAutoMapper(typeof(ModelToDTOMapping));
     }
 
     private static void RegisterEnv()

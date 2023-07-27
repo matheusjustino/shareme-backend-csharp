@@ -1,5 +1,6 @@
 ﻿namespace shareme_backend.Services;
 
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using shareme_backend.Data;
 using shareme_backend.DTOs.Post;
@@ -13,14 +14,17 @@ public class PostService : IPostService
 
     private readonly IManageImageService _manageImageService;
 
-    public PostService(ILogger<PostService> logger, AppDbContext context, IManageImageService manageImageService)
+    private readonly IMapper _mapper;
+
+    public PostService(ILogger<PostService> logger, AppDbContext context, IManageImageService manageImageService, IMapper mapper)
     {
         this._logger = logger;
         this._context = context;
         this._manageImageService = manageImageService;
+        this._mapper = mapper;
     }
 
-    public async Task<Post> CreatePost(Guid userId, CreatePostDTO data)
+    public async Task<PostDTO> CreatePost(Guid userId, CreatePostDTO data)
     {
         this._logger.LogInformation($"Create Post - data: {data.ToString()}");
 
@@ -35,7 +39,7 @@ public class PostService : IPostService
 
         try
         {
-            var newPost = new Models.Post
+            var newPost = new Post
             {
                 Title = data.Title, Description = data.Description, ImageSrc = filename, PostedById = userId, User = user,
             };
@@ -44,7 +48,9 @@ public class PostService : IPostService
             await this._context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            return newPost;
+            var response = this._mapper.Map<PostDTO>(newPost);
+
+            return response;
         }
         catch (Exception)
         {
@@ -58,14 +64,14 @@ public class PostService : IPostService
         }
     }
 
-    public async Task<List<Post>> ListPosts(int skip, int limit)
+    public async Task<List<PostDTO>> ListPosts(int skip, int limit)
     {
-        return await this._context.Posts
+        return this._mapper.Map<List<PostDTO>>(await this._context.Posts
             .OrderBy(p => p.CreatedAt)
             .Skip(skip * limit)
             .Take(limit)
             .Include(p => p.User)
-            .ToListAsync();
+            .ToListAsync());
     }
 
     public string GetFile(string filename)
