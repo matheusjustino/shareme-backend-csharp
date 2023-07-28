@@ -5,8 +5,6 @@ using shareme_backend.Models;
 
 public class AppDbContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-
     public DbSet<User> Users { get; set; }
 
     public DbSet<Post> Posts { get; set; }
@@ -15,9 +13,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Like> Likes { get; set; }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        this._configuration = configuration;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
