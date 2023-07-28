@@ -1,8 +1,8 @@
 ﻿namespace shareme_backend.DTOs.Post;
 
-using shareme_backend.DTOs.User;
+using System.Text.Json;
 
-public class PostDTO
+public class ListPostsResponseDTO
 {
     public Guid Id { get; set; }
 
@@ -12,15 +12,12 @@ public class PostDTO
 
     public string ImageSrc { get; set; }
 
-    public Guid PostedById { get; set; }
-
-    public UserDTO User { get; set; }
-
-    public List<CommentDTO> Comments { get; set; }
-
-    public int? LikesCount { get; set; }
-
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+
+    public override string ToString()
+    {
+        return JsonSerializer.Serialize(this);
+    }
 }

@@ -11,5 +11,7 @@ public class ModelToDTOMapping : Profile
     {
         CreateMap<User, UserDTO>();
         CreateMap<Post, PostDTO>();
+        CreateMap<Post, ListPostsResponseDTO>();
+        CreateMap<Comment, CommentDTO>();
     }
 }

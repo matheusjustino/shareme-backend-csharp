@@ -64,14 +64,84 @@ public class PostService : IPostService
         }
     }
 
-    public async Task<List<PostDTO>> ListPosts(int skip, int limit)
+    public async Task<List<ListPostsResponseDTO>> ListPosts(int skip, int limit)
     {
-        return this._mapper.Map<List<PostDTO>>(await this._context.Posts
+        return this._mapper.Map<List<ListPostsResponseDTO>>(await this._context.Posts
             .OrderBy(p => p.CreatedAt)
             .Skip(skip * limit)
             .Take(limit)
-            .Include(p => p.User)
             .ToListAsync());
+    }
+
+    public async Task<PostDTO> GetPost(Guid postId)
+    {
+        this._logger.LogInformation($"Get Post - postId: {postId}");
+
+        var post = await this._context.Posts
+            .Where(p => p.Id == postId)
+            .Include(p => p.User)
+            .FirstOrDefaultAsync();
+        if (post is null)
+        {
+            throw new BadHttpRequestException("Post not found");
+        }
+
+        var postComments =
+            await this._context.Comments
+                .Where(c => c.PostId == postId)
+                .Include(c => c.User)
+                .Select(c => this._mapper.Map<CommentDTO>(c))
+                .ToListAsync();
+
+        var postLikes = await this._context.Likes
+            .Select(l => l.PostId == postId)
+            .CountAsync();
+
+        var response = this._mapper.Map<PostDTO>(post);
+        response.Comments = postComments;
+        response.LikesCount = postLikes;
+
+        return response;
+    }
+
+    public async Task<CommentDTO> CreateComment(Guid userId, CreateCommentDTO data)
+    {
+        this._logger.LogInformation($"Create Comment - userId: {userId} - data: {data.ToString()}");
+
+        var newComment = new Comment { PostId = data.PostId, Content = data.Content, CommentedById = userId, };
+
+        await this._context.Comments.AddAsync(newComment);
+        await this._context.SaveChangesAsync();
+
+        var comment = await this._context.Comments
+            .Include(c => c.User)
+            .Select(c => this._mapper.Map<CommentDTO>(c))
+            .FirstOrDefaultAsync();
+        if (comment is null)
+        {
+            throw new BadHttpRequestException("Comment not found");
+        }
+
+        return comment;
+    }
+
+    public async Task LikeDislikePost(Guid userId, Guid postId)
+    {
+        this._logger.LogInformation($"LikeDislike Post - userId: {userId} - postId: {postId}");
+
+        var existingLike = await this._context.Likes
+            .FirstOrDefaultAsync(l => l.PostId == postId && l.LikedById == userId);
+        if (existingLike != null)
+        {
+            this._context.Likes.Remove(existingLike);
+        }
+        else
+        {
+            var newLike = new Like { PostId = postId, LikedById = userId, };
+            await this._context.AddAsync(newLike);
+        }
+
+        await this._context.SaveChangesAsync();
     }
 
     public string GetFile(string filename)

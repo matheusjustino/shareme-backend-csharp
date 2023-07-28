@@ -39,13 +39,15 @@ public static partial class ServiceInitializer
             throw new ApplicationException("Database connection string not found");
         }
 
-        services.AddDbContext<AppDbContext>(options =>
-        {
-            options.UseSqlServer(connectionString);
-            options.EnableSensitiveDataLogging();
-            options.EnableDetailedErrors();
-            options.UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
-        });
+        services.AddDbContext<AppDbContext>(
+            options =>
+            {
+                options.UseSqlServer(connectionString);
+                options.EnableSensitiveDataLogging();
+                options.EnableDetailedErrors();
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+            },
+            ServiceLifetime.Transient);
     }
 
     private static void RegisterControllers(IServiceCollection services)

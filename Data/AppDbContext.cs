@@ -5,6 +5,8 @@ using shareme_backend.Models;
 
 public class AppDbContext : DbContext
 {
+    private readonly IConfiguration _configuration;
+
     public DbSet<User> Users { get; set; }
 
     public DbSet<Post> Posts { get; set; }
@@ -13,7 +15,10 @@ public class AppDbContext : DbContext
 
     public DbSet<Like> Likes { get; set; }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
+    public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration) : base(options)
+    {
+        this._configuration = configuration;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +44,27 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(p => p.PostedById)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<Entity>().ToList();
+
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = DateTime.Now;
+                entry.Entity.UpdatedAt = DateTime.Now;
+            }
+
+            if (entry.State is EntityState.Added or EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = DateTime.Now;
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public override int SaveChanges()

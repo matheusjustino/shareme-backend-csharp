@@ -29,10 +29,37 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<PostDTO>>> ListPosts([FromQuery] int? skip, [FromQuery] int? limit)
+    public async Task<ActionResult<List<ListPostsResponseDTO>>> ListPosts([FromQuery] int? skip, [FromQuery] int? limit)
     {
         var posts = await this._postService.ListPosts(skip ?? 0, limit ?? 10);
         return Ok(posts);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<PostDTO>> GetPost([FromRoute] Guid id)
+    {
+        var post = await this._postService.GetPost(id);
+        return Ok(post);
+    }
+
+    [Authorize]
+    [HttpPost("add/comment")]
+    public async Task<ActionResult<CommentDTO>> CreateComment([FromBody] CreateCommentDTO body)
+    {
+        var user = (CurrentUser)HttpContext.Items["User"];
+        var comment = await this._postService.CreateComment(user.UserId, body);
+
+        return Ok(comment);
+    }
+
+    [Authorize]
+    [HttpPost("{id:guid}/like")]
+    public async Task<ActionResult> LikeDislikePost([FromRoute] Guid id)
+    {
+        var user = (CurrentUser)HttpContext.Items["User"];
+        await this._postService.LikeDislikePost(user.UserId, id);
+
+        return Ok();
     }
 
     [HttpGet("image/{filename}")]

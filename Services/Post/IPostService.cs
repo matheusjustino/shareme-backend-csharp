@@ -6,7 +6,13 @@ public interface IPostService
 {
     Task<PostDTO> CreatePost(Guid userId, CreatePostDTO data);
 
-    Task<List<PostDTO>> ListPosts(int skip = 0, int limit = 10);
+    Task<List<ListPostsResponseDTO>> ListPosts(int skip = 0, int limit = 10);
+
+    Task<PostDTO> GetPost(Guid postId);
+
+    Task<CommentDTO> CreateComment(Guid userId, CreateCommentDTO data);
+
+    Task LikeDislikePost(Guid userId, Guid postId);
 
     string GetFile(string filename);
 }
