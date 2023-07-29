@@ -9,6 +9,7 @@ public static partial class MiddlewareInitializer
     {
         ConfigureSwagger(app);
 
+        app.UseCors("CorsPolicy");
         app.UseRouting();
         app.UseHttpsRedirection();
         app.UseMiddleware<ExceptionHandlingMiddleware>();

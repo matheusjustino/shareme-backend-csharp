@@ -67,13 +67,13 @@ public class PostService : IPostService
     public async Task<List<ListPostsResponseDTO>> ListPosts(int skip, int limit)
     {
         return this._mapper.Map<List<ListPostsResponseDTO>>(await this._context.Posts
-            .OrderBy(p => p.CreatedAt)
+            .OrderByDescending(p => p.CreatedAt)
             .Skip(skip * limit)
             .Take(limit)
             .ToListAsync());
     }
 
-    public async Task<PostDTO> GetPost(Guid postId)
+    public async Task<PostDTO> GetPost(Guid postId, Guid? userId)
     {
         this._logger.LogInformation($"Get Post - postId: {postId}");
 
@@ -88,6 +88,7 @@ public class PostService : IPostService
 
         var postComments =
             await this._context.Comments
+                .OrderByDescending(c => c.CreatedAt)
                 .Where(c => c.PostId == postId)
                 .Include(c => c.User)
                 .Select(c => this._mapper.Map<CommentDTO>(c))
@@ -97,9 +98,12 @@ public class PostService : IPostService
             .Select(l => l.PostId == postId)
             .CountAsync();
 
+        var userAlreadyLikedPost = userId != null ? await this._context.Likes.FirstOrDefaultAsync(l => l.LikedById == userId) : null;
+
         var response = this._mapper.Map<PostDTO>(post);
         response.Comments = postComments;
         response.LikesCount = postLikes;
+        response.UserLikedPost = userAlreadyLikedPost != null;
 
         return response;
     }
@@ -115,6 +119,7 @@ public class PostService : IPostService
 
         var comment = await this._context.Comments
             .Include(c => c.User)
+            .Where(c => c.Id == newComment.Id)
             .Select(c => this._mapper.Map<CommentDTO>(c))
             .FirstOrDefaultAsync();
         if (comment is null)

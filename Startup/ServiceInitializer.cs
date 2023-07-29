@@ -2,12 +2,14 @@
 
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using shareme_backend.Data;
 using shareme_backend.Utils;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 public static partial class ServiceInitializer
 {
@@ -42,7 +44,15 @@ public static partial class ServiceInitializer
         services.AddDbContext<AppDbContext>(
             options =>
             {
-                options.UseSqlServer(connectionString);
+                if (services.BuildServiceProvider().GetService<IHostingEnvironment>().IsDevelopment())
+                {
+                    options.UseSqlServer(connectionString);
+                }
+                else
+                {
+                    options.UseNpgsql(connectionString);
+                }
+
                 options.EnableSensitiveDataLogging();
                 options.EnableDetailedErrors();
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
@@ -52,7 +62,9 @@ public static partial class ServiceInitializer
 
     private static void RegisterControllers(IServiceCollection services)
     {
-        services.AddControllers();
+        services
+            .AddControllers()
+            .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
     }
 
     private static void RegisterCustomDependencies(IServiceCollection services)

@@ -8,7 +8,7 @@ public interface IPostService
 
     Task<List<ListPostsResponseDTO>> ListPosts(int skip = 0, int limit = 10);
 
-    Task<PostDTO> GetPost(Guid postId);
+    Task<PostDTO> GetPost(Guid postId, Guid? userId);
 
     Task<CommentDTO> CreateComment(Guid userId, CreateCommentDTO data);
 

@@ -20,6 +20,8 @@ public class PostDTO
 
     public int? LikesCount { get; set; }
 
+    public bool UserLikedPost { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

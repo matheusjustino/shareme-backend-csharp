@@ -38,7 +38,17 @@ public class PostController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<PostDTO>> GetPost([FromRoute] Guid id)
     {
-        var post = await this._postService.GetPost(id);
+        var user = (CurrentUser)HttpContext.Items["User"];
+        PostDTO post;
+        if (user != null)
+        {
+            post = await this._postService.GetPost(id, user.UserId);
+        }
+        else
+        {
+            post = await this._postService.GetPost(id, null);
+        }
+
         return Ok(post);
     }
 
