@@ -1,7 +1,8 @@
 ﻿[build]
 builder = "dockerfile"
-dockerfilePath = "."
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "dotnet shareme-backend.dll"
+startCommand = "dotnet out/shareme-backend.dll"
 restartPolicyType = "never"
+healthcheckPath = "/api/health"
