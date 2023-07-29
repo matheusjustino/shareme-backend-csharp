@@ -1,0 +1,7 @@
+﻿[build]
+builder = "dockerfile"
+dockerfilePath = "."
+
+[deploy]
+startCommand = "dotnet shareme-backend.dll"
+restartPolicyType = "never"

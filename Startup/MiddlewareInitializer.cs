@@ -11,7 +11,7 @@ public static partial class MiddlewareInitializer
 
         app.UseCors("CorsPolicy");
         app.UseRouting();
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseAuthentication(); // first
         app.UseAuthorization(); // after
