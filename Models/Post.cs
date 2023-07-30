@@ -11,4 +11,6 @@ public class Post : Entity
     public Guid PostedById { get; set; }
 
     public User User { get; set; }
+
+    public List<Category> Categories { get; set; }
 }

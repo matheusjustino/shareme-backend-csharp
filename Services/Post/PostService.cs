@@ -34,6 +34,12 @@ public class PostService : IPostService
             throw new BadHttpRequestException("User not found");
         }
 
+        var category = await this._context.Category.FirstOrDefaultAsync(c => c.Id == data.CategoryId);
+        if (category == null)
+        {
+            throw new BadHttpRequestException("Category not found");
+        }
+
         await using var transaction = await this._context.Database.BeginTransactionAsync();
         var filename = await this._manageImageService.UploadFile(data.Image);
 
@@ -41,7 +47,7 @@ public class PostService : IPostService
         {
             var newPost = new Post
             {
-                Title = data.Title, Description = data.Description, ImageSrc = filename, PostedById = userId, User = user,
+                Title = data.Title, Description = data.Description, ImageSrc = filename, PostedById = userId, User = user, Categories = new List<Category> { category },
             };
 
             await this._context.Posts.AddAsync(newPost);
@@ -64,12 +70,22 @@ public class PostService : IPostService
         }
     }
 
-    public async Task<List<ListPostsResponseDTO>> ListPosts(int skip, int limit)
+    public async Task<List<ListPostsResponseDTO>> ListPosts(ListPostsQueryDTO query)
     {
-        return this._mapper.Map<List<ListPostsResponseDTO>>(await this._context.Posts
-            .OrderByDescending(p => p.CreatedAt)
-            .Skip(skip * limit)
-            .Take(limit)
+        Console.WriteLine(query.Category);
+        this._logger.LogInformation($"query {query.ToString()}");
+        IQueryable<Post> queryable = this._context.Posts;
+
+        if (!string.IsNullOrEmpty(query.Category))
+        {
+            queryable = queryable.Where(p => p.Categories.Any(c => c.Name == query.Category));
+        }
+
+        queryable = queryable.OrderByDescending(p => p.CreatedAt);
+
+        return this._mapper.Map<List<ListPostsResponseDTO>>(await queryable
+            .Skip(query.Skip * query.Limit)
+            .Take(query.Limit)
             .ToListAsync());
     }
 

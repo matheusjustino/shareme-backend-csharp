@@ -2,6 +2,8 @@
 
 WORKDIR /app
 
+ENV ASPNETCORE_ENVIRONMENT "Production"
+
 COPY *.csproj ./
 RUN dotnet restore
 
@@ -15,8 +17,10 @@ WORKDIR /app
 
 COPY --from=build /app/out ./
 
-EXPOSE 8080
+ENV ASPNETCORE_ENVIRONMENT "Production"
+ENV ASPNETCORE_URLS "http://+:80"
+
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT ["dotnet", "shareme-backend.dll"]
+ENTRYPOINT ["dotnet", "SharemeBackend.dll"]

@@ -44,15 +44,7 @@ public static partial class ServiceInitializer
         services.AddDbContext<AppDbContext>(
             options =>
             {
-                if (services.BuildServiceProvider().GetService<IHostingEnvironment>().IsDevelopment())
-                {
-                    options.UseSqlServer(connectionString);
-                }
-                else
-                {
-                    options.UseNpgsql(connectionString);
-                }
-
+                options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
                 options.EnableDetailedErrors();
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);

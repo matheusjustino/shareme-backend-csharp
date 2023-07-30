@@ -29,9 +29,9 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<ListPostsResponseDTO>>> ListPosts([FromQuery] int? skip, [FromQuery] int? limit)
+    public async Task<ActionResult<List<ListPostsResponseDTO>>> ListPosts([FromQuery] ListPostsQueryDTO query)
     {
-        var posts = await this._postService.ListPosts(skip ?? 0, limit ?? 10);
+        var posts = await this._postService.ListPosts(query);
         return Ok(posts);
     }
 

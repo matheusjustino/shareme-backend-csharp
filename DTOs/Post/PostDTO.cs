@@ -1,5 +1,6 @@
 ﻿namespace shareme_backend.DTOs.Post;
 
+using shareme_backend.DTOs.Category;
 using shareme_backend.DTOs.User;
 
 public class PostDTO
@@ -17,6 +18,8 @@ public class PostDTO
     public UserDTO User { get; set; }
 
     public List<CommentDTO> Comments { get; set; }
+
+    public List<CategoryDTO> Categories { get; set; }
 
     public int? LikesCount { get; set; }
 

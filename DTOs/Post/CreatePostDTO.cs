@@ -14,6 +14,9 @@ public class CreatePostDTO
     [Required]
     public IFormFile Image { get; set; }
 
+    [Required]
+    public Guid CategoryId { get; set; }
+
     public override string ToString()
     {
         return JsonSerializer.Serialize(this);

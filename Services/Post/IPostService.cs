@@ -6,7 +6,7 @@ public interface IPostService
 {
     Task<PostDTO> CreatePost(Guid userId, CreatePostDTO data);
 
-    Task<List<ListPostsResponseDTO>> ListPosts(int skip = 0, int limit = 10);
+    Task<List<ListPostsResponseDTO>> ListPosts(ListPostsQueryDTO query);
 
     Task<PostDTO> GetPost(Guid postId, Guid? userId);
 
